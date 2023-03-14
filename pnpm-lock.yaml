@@ -1,0 +1,12 @@
+lockfileVersion: 5.4
+
+importers:
+
+  .:
+    specifiers: {}
+
+  packages/second:
+    specifiers:
+      '@hope/first': workspace:^1.0.0
+    dependencies:
+      '@hope/first': link:../first
