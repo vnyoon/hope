@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    // 文件路径在解析时的基本url
+    "baseUrl": ".",
+    // jsx的处理方式（保留原有的jsx格式）
+    "jsx": "preserve",
+    // 打开所有的严格模式检查
+    "strict": true,
+    // 目标代码
+    "target": "ES2015",
+    // 生成代码使用的模块化
+    "module": "ESNext",
+    // 跳过对整个库进行类型检测，而仅仅检测你用到的类型
+    "skipLibCheck": true,
+    // 可以让es module 和 Commonjs 相互调用
+    "esModuleInterop": true,
+    // 按照node的模块解析规则
+    "moduleResolution": "node",
+    // 指定我们需要使用到的库（也可以不配置，直接根据target来获取）
+    "lib": ["ESNext", "DOM"]
+  }
+}
