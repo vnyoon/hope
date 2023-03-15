@@ -1,5 +1,5 @@
 {
-  "name": "@hope/first",
+  "name": "@hope/components",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,6 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "type": "module"
+  "license": "ISC"
 }
