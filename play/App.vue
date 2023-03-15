@@ -1,9 +1,13 @@
 <template>
   <div>
     my test app
-    
-    <Button />
-    <Input />
+    <hr>
+
+    按需引入：<Button /> <Input />
+
+    <hr>
+
+    全局引入：<h-button /> <h-input />
   </div>
 </template>
 
