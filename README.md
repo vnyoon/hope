@@ -138,3 +138,7 @@
   #### 全局组件添加提示
     * 安装插件`pnpm add @vue/runtime-core -D -w`；  
     * 在src下新建components.d.ts声明文件；
+
+### 3.4. 组件开发
+  * 一个组件需要接受一些参数来实现不同效果，比如 Button 组件就需要接收type、size、round等属性；
+  * 根据传入的不同type来赋予 Button 组件不同类名，展示不同样式；

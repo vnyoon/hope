@@ -1,5 +1,7 @@
 <template>
-  <button>按钮</button>
+  <button class="h-button" :class="buttonStyle">
+    按钮
+  </button>
 </template>
 
 <!-- 
@@ -24,7 +26,22 @@ export default defineComponent({
 <script lang="ts" setup></script> -->
 
 <script lang="ts" setup>
-  defineOptions({
-    name: 'h-button'
-  })
+  import { computed } from "vue";
+
+  defineOptions({ name: 'h-button' });
+
+  type BtnProps = {
+    type?: string
+  }
+  const btnProps = defineProps<BtnProps>();
+
+  const buttonStyle = computed(() => {
+    return {
+      [`h-button--${btnProps.type}`]: btnProps.type
+    }
+  });
 </script>
+
+<style>
+  @import './style/index.less';
+</style>
