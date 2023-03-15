@@ -3,7 +3,7 @@
     my test app
     <hr>
 
-    按需引入：<Button /> <Input />
+    按需引入：<Button type="primary" /> <Input />
 
     <hr>
 
