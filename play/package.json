@@ -13,5 +13,8 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
     "vite": "^4.1.4"
+  },
+  "dependencies": {
+    "@hope/components": "workspace:^1.0.0"
   }
 }

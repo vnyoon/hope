@@ -1,5 +1,5 @@
 {
-  "name": "@hope/second",
+  "name": "@hope/utils",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,9 +8,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@hope/first": "workspace:^1.0.0"
-  },
-  "type": "module"
+  "license": "ISC"
 }
