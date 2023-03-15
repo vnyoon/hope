@@ -17,6 +17,7 @@
     // 按照node的模块解析规则
     "moduleResolution": "node",
     // 指定我们需要使用到的库（也可以不配置，直接根据target来获取）
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "types": ["unplugin-vue-define-options/macros-global"]
   }
 }

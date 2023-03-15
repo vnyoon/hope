@@ -118,14 +118,23 @@
   * 新建一个声明文件shims-vue.d.ts，让 ts 认识*.vue的文件；
 
 ## 三、开发一个组件
-### 创建组件
+### 3.1. 创建组件
   * 在packages下新建components和utils两个文件夹，components就是我们组件存放的位置，而utils包则是存放一些公共的方法之类的；
     - 在components目录新建src文件夹（存放组件：button、input...）和index.ts文件（导出所有组件提供给外部使用）；
     - 在src目录新建button文件夹和index.ts文件（集中导出src下的所有组件）；
     - 在button目录新建button.vue和index.ts文件（用于到处btn.vue组件）；
   * 分别在两个文件夹下执行pnpm init，并把包名更改为@hope/components和@hope/utils；
 
-### 测试组件
+### 3.2. 测试组件
   * 在我们的vue3项目（play文件夹）中本地安装@hope/components：`pnpm add @hope/components`；
   * 然后在App.vue中引入Button；
 
+### 3.3. 全局注册组件
+  * 使用app.use()插件它会自动调用传入参数里的自带函数install() 并传入app，因此我们给每个组件添加一个 install 方法，然后再导出整个组件库。更改button/index.ts文件；
+  * 调整components/index.ts文件；
+  * 在play/main.ts中全局挂载组件库；
+  * 此时我们需要给button.vue一个name，在注册组件的时候作为组件名使用；
+  * app.vue 中使用h-button组件，页面显示按钮，就是组件库注册成功了；
+  #### 全局组件添加提示
+    * 安装插件`pnpm add @vue/runtime-core -D -w`；  
+    * 在src下新建components.d.ts声明文件；
