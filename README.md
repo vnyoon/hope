@@ -82,3 +82,37 @@
   ```
 
 ### 基于Vite的Vue3项目
+  * 创建一个基于Vite的Vue3项目来对组件库进行调试、测试；
+  * 在根目录新建一个叫 play 的文件夹然后初始化pnpm init，后续的组件调试就在这个项目下进行；
+#### 安装插件
+  * 需要安装vite 和 vitejs/plugin-vue 插件，@vitejs/plugin-vue插件是为了解析后缀为.vue文件；
+  * `pnpm add vite @vitejs/plugin-vue -D`；
+#### 配置vite.config.ts
+  * 新建vite.config.ts配置文件；
+    ```js
+    import { defineConfig } from "vite";
+    import vue from "@vitejs/plugin-vue";
+
+    export default defineConfig({
+      plugins: [vue()]
+    });
+    ```
+#### 新建html文件
+  * @vitejs/plugin-vue会默认加载 play 下的 index.html；
+  * 因为 vite 是基于 esmodule 的，所以script标签中需要添加type="module"；
+#### 新建App.vue文件
+#### 新建入口main.ts文件
+#### 配置脚本启动项目
+  * 在package.json配置scripts脚本；
+  * 此时执行`pnpm run dev`就能启动项目了，页面上展示App.vue文件里的内容证明成功；
+#### 关联本地包
+  * 因为 play 项目需要测试本地的组件库，所以也需要将 play 和我们的组件库关联在一起。修改pnpm-workspace.yaml文件；
+  ```js
+    packages:
+    - 'packages/**'
+    - 'play'
+  ```
+  * 此时 play 项目便可以安装本地 packages 下的包了
+#### ts 识别.vue文件
+  * ts 无法识别*.vue文件，所以引入组件时编译器会报红；
+  * 新建一个声明文件shims-vue.d.ts，让 ts 认识*.vue的文件；
