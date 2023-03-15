@@ -47,3 +47,38 @@
     ```
   * 因为我们在文件里使用的是ESModule语法，所以两者入口文件里添加字段"type": "module"，最后执行node index.js，有打印f文件里的log就证明完成了本地包的关联；
 
+
+## 组件库的环境配置
+* 在项目中引入 ts 以及手动搭建一个用于测试组件库组件的 Vue3 项目；
+* 因为我们是使用 Vite+Ts 开发的是 Vue3 组件库，所以我们需要安装ts、vue3，同时项目采用 Less 进行组件库样式的管理；
+* 使用pnpm如果要安装在项目根目录下，则需要加-w：`pnpm add vue typescript less -D -w`；
+
+### 初始化TypeScript
+* 在根目录执行`npx tsc --init`会自动生成 ts 的配置文件`tsconfig.json`；
+* 调整：
+  ```js
+    {
+      "compilerOptions": {
+        // 文件路径在解析时的基本url
+        "baseUrl": ".",
+        // jsx的处理方式（保留原有的jsx格式）
+        "jsx": "preserve",
+        // 打开所有的严格模式检查
+        "strict": true,
+        // 目标代码
+        "target": "ES2015",
+        // 生成代码使用的模块化
+        "module": "ESNext",
+        // 跳过对整个库进行类型检测，而仅仅检测你用到的类型
+        "skipLibCheck": true,
+        // 可以让es module 和 Commonjs 相互调用
+        "esModuleInterop": true,
+        // 按照node的模块解析规则
+        "moduleResolution": "node",
+        // 指定我们需要使用到的库（也可以不配置，直接根据target来获取）
+        "lib": ["ESNext", "DOM"]
+      }
+    }
+  ```
+
+### 基于Vite的Vue3项目
