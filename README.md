@@ -142,3 +142,20 @@
 ### 3.4. 组件开发
   * 一个组件需要接受一些参数来实现不同效果，比如 Button 组件就需要接收type、size、round等属性；
   * 根据传入的不同type来赋予 Button 组件不同类名，展示不同样式；
+
+## 四、使用Vite打包组件库
+### 4.1. 打包配置
+  * vite 专门提供了库模式的打包方式，安装 vite 以及@vitejs/plugin-vue：`pnpm add vite @vitejs/plugin-vue -D -w`；
+  * 在packages/components目录下新建vite.config.ts配置文件；
+  * 然后在同目录下package.json文件里的scripts配置打包命令；
+    ```js
+    "scripts": {
+      "build": "vite build"
+    }
+    ```
+  * 执行`npm run build`；
+
+### 4.2. 打包声明文件
+  * 在打包的库里加入声明文件(.d.ts)；
+  * 安装vite-plugin-dts：`pnpm add vite-plugin-dts@1.4.1 -D -w`；
+  * 调整vite.config.ts文件；
