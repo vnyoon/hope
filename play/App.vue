@@ -3,7 +3,13 @@
     my test app
     <hr>
 
-    按需引入：<Button type="primary" /> <Input />
+    按需引入：
+    <br>
+    <Button type="primary" />
+    <br>
+    <Input /> 
+  
+    <Icon />
 
     <hr>
 
@@ -12,5 +18,5 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Input } from "@hope/components";
+import { Button, Input, Icon } from "@hope/components";
 </script>

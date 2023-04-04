@@ -161,3 +161,98 @@
   * 调整vite.config.ts文件；
 
 ## 五、[前端流程化控制工具gulp的使用](https://github.com/one-season/gulp-practice)
+
+## 六、使用 gulp 打包组件库并实现按需加载
+  * 使用 Vite 库模式打包的时候，vite 会将样式文件全部打包到同一个文件中，这样的话我们每次都要全量引入所有样式文件做不到按需引入的效果。所以打包的时候我们可以不让 vite 打包样式文件，样式文件将使用 gulp 进行打包；
+### 6.1. 自动按需引入插件
+  * 现在很多组件库的按需引入都是借助插件来解决的，比如ElementPlus是使用`unplugin-vue-components`和`unplugin-auto-import`；
+  * 这两个插件可以实现：
+    ```js
+    import { Button } from "easyest";
+
+    //相当于
+    import "easyest/es/src/button/style/index.css";
+    import "easyest/es/src/button/index.mjs";
+    ```
+
+### 6.2. 删除打包文件函数
+  * 在打包之前是需要将前面打包的文件删除的，所以需要先写一个删除函数。在此之前，先在 components下 新建一个 script 文件夹用于存放脚本相关内容；
+  * 在 script/utils 中新建 paths.ts 用于维护组件库路径。安装插件：`pnpm add @types/node -D -w`；
+    ```js
+    import { resolve } from "path";
+
+    // 组件库根目录
+    export const componentPath = resolve(__dirname, '../../');
+
+    // packages根目录
+    export const pkgPath = resolve(__dirname, '../../../');
+    ```
+  * 删除打包目录函数可以放在 script/utils 中的 delpath.ts，注意这里因为打包后的 hope 包是最终要发布的包，所以需要将`package.json`和`README.md`保留下来；
+    ```js
+    import fs from "fs";
+    import { resolve } from "path";
+    import { pkgPath } from "./paths";
+
+    const stayFile = ['package.json', 'README.md'];
+
+    const delPath = async (path: string) => {
+      let files: string[] = [];
+      
+      if (fs.existsSync(path)) {
+        files = fs.readdirSync(path);
+
+        files.forEach(async file => {
+          let currentPath = resolve(path, file);
+
+          if (fs.statSync(currentPath).isDirectory()) {
+            if (file != 'node_modules') await delPath(currentPath);
+          } else {
+            if (!stayFile.includes(file)) {
+              fs.unlinkSync(currentPath)
+            }
+          }
+        });
+
+        if (path !== `${pkgPath}/hope`) fs.rmdirSync(path);
+      }
+    };
+
+    export default delPath;
+    ```
+
+### 6.3. 使用gulp执行删除任务
+  * 我们需要使用 ts 以及新的 es6 语法，而 gulp 是不支持的，所以我们需要安装一些依赖使得 gulp 支持这些，其中 sucras 让我们执行 gulp 可以使用最新语法并且支持 ts；安装依赖：`pnpm i gulp @types/gulp sucrase -D -w`；
+  * 在script/build/index.ts文件来定义删除任务；
+    ```js
+    import delPath from "../utils/delpath";
+    import { pkgPath } from "../utils/paths";
+    import { series } from "gulp";
+
+    // 删除hope
+    export const removeDist = () => {
+      return delPath(`${pkgPath}/hope`);
+    };
+
+    export default series(async () => removeDist());
+    ```
+  * 然后在根目录 hope/package.json 添加脚本；
+    ```js
+    "scripts": {
+      "build:hope": "gulp -f packages/components/script/build/index.ts"
+    }
+    ```
+  * 此时根目录执行`pnpm run build:hope`就会发现 hope 下的文件被删除了；
+
+### 6.4. gulp打包样式
+  * 因为用的是 less 写的样式，所以需要安装gulp-less，同时在安装一个自动补全 css 兼容前缀插件gulp-autoprefixer以及它们对应的上面文件：
+    - `pnpm add gulp-less @types/gulp-less gulp-autoprefixer @types/gulp-autoprefixer -D -w`
+  * 然后写一个打包样式的函数，script/build/index.ts 改动；
+
+### 6.5. gulp打包组件
+  * 写一个执行命令的工具函数，在 script/utils/run.ts；
+  * 在打包组件函数中引入执行命令的工具函数；
+  * 打包样式和打包组件可以并行，所以更改build/index.ts；
+  * 最后 vite 打包的时候忽略 less 文件，改动components/vite.config.ts文件；
+  * 为了更好的看打包后的效果，可以再写一个简单的 Icon 组件，执行`pnpm run build:hope`，即可完成打包；
+  * 由于 vite 打包忽略了 less 文件打包，所以打包后的文件遇到.less 文件的引入会自动跳过，所以引入代码没变，但是我们已经将 less 文件打包成 css 文件了，所以我们需要将代码中的.less换成.css；
+    - 在components/vite.config.ts 中的 plugins 中新增改改动代码，最后执行`pnpm run build:hope`；
