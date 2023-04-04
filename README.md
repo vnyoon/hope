@@ -159,3 +159,5 @@
   * 在打包的库里加入声明文件(.d.ts)；
   * 安装vite-plugin-dts：`pnpm add vite-plugin-dts@1.4.1 -D -w`；
   * 调整vite.config.ts文件；
+
+## 五、[前端流程化控制工具gulp的使用](https://github.com/one-season/gulp-practice)
