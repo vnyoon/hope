@@ -320,4 +320,5 @@
       "publish:hope": "gulp -f packages/components/script/publish/index.ts"
     },
     ```
-  * 根目录执行pnpm run publish:easyest，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
+  * 将改动提交后根目录执行pnpm run publish:easyest，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
+  * 选择完之后组件库就发布成功了，并且github上也成功加上了一个tag；
