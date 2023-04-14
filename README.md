@@ -256,3 +256,68 @@
   * 为了更好的看打包后的效果，可以再写一个简单的 Icon 组件，执行`pnpm run build:hope`，即可完成打包；
   * 由于 vite 打包忽略了 less 文件打包，所以打包后的文件遇到.less 文件的引入会自动跳过，所以引入代码没变，但是我们已经将 less 文件打包成 css 文件了，所以我们需要将代码中的.less换成.css；
     - 在components/vite.config.ts 中的 plugins 中新增改改动代码，最后执行`pnpm run build:hope`；
+
+## 七、使用 release-it 实现自动管理发布组件库
+### 7.1. 发布前准备工作
+  * 因为要发布的包名为打包后的 hope，因此在 packages/hope 下执行`pnpm init`生成package.json；
+    ```js
+      {
+        "name": "hope",
+        "version": "1.0.0",
+        "description": "一个 Vue3 组件库开发环境框架，采用最新的 Vite4+TypeScript 为技术栈，支持按需加载、单元测试、自动打包与发布等功能，让我们能更专注于业务组件的开发",
+        "main": "lib/index.js",
+        "module": "h/index.mjs",
+        "files": [
+          "h",
+          "lib"
+        ],
+        "scripts": {
+          "test": "echo \"Error: no test specified\" && exit 1"
+        },
+        "keywords": [
+          "hope",
+          "vue3组件库"
+        ],
+        "sideEffects": [
+          "**/*.css"
+        ],
+        "author": "season",
+        "license": "MIT",
+        "typings": "lib/index.d.ts"
+      }
+    ```
+  * 解释一下其中的几个字段：
+    - main：组件库入口文件；
+    - module：如果使用组件库的环境支持 esmodule 则入口文件变成这个字段；
+    - files：发布到 npm 上的文件目录；
+    - sideEffects：忽略 tree shaking 带来副作用的代码，比如打包后组件代码中包含了`import "./xxx.css"`，这样会使得构建工具无法知道这段代码是否有副作用(也就是会不会用到其它引入的文件中的代码)，所以构建的时候就会全量打包代码从而失去 esmodule 的自动按需引入功能。因此加上 sideEffects 字段就可以告诉构建工具这段代码不会产生副作用，可以放心的 tree shaking；
+    - typings：声明文件入口；
+
+### 7.2. 关联npmjs手动发布
+  * 在打包目录（packages/hope）下执行pnpm publish，注意此时会让你登录 npm 账户，如果没有的话直接去[NPM官网](https://www.npmjs.com/)注册即可，发布之前要将代码提交到仓库或者加上后缀pnpm publish --no-git-checks，然后登录 npm 就能看到刚刚发布的包；
+
+> 每次发布前需要调整package.json中的"version": "1.0.1"，不能和上一个版本的值一样，否则会报没有权限等错误；
+
+### 7.3. 实现自动发布
+  * 全局安装release-it：`pnpm add release-it -D -w`；
+  * 在打包后目录下的package.json中加入 script 脚本以及 git 仓库地址；
+  * 在 components/script 目录下新建 publish/index.ts 用于发布任务；
+    ```js
+    import run from "../utils/run";
+    import { pkgPath } from "../utils/paths"
+
+    import { series } from "gulp";
+
+    export const publishComponent = async () => {
+      run("release-it", `${pkgPath}/hope`)
+    };
+
+    export default series(async () => publishComponent);
+    ```
+  * 在根目录的 package.json 文件中新增 scripts 命令 gulp 执行 publish/index.ts
+    ```js
+    "scripts": {
+      "publish:hope": "gulp -f packages/components/script/publish/index.ts"
+    },
+    ```
+  * 根目录执行pnpm run publish:easyest，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
