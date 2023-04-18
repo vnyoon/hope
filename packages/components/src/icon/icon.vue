@@ -2,6 +2,6 @@
   <div class="h-icon">Icon</div>
 </template>
 
-<style lang="less" scoped>
-  @import './style/index.less';
-</style>
+<script lang="ts" setup>
+  import "./style/index.less";
+</script>

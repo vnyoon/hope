@@ -1,6 +1,6 @@
 <template>
   <button class="h-button" :class="buttonStyle">
-    按钮
+    <slot />
   </button>
 </template>
 
@@ -26,6 +26,8 @@ export default defineComponent({
 <script lang="ts" setup></script> -->
 
 <script lang="ts" setup>
+  import "./style/index.less";
+  
   import { computed } from "vue";
 
   defineOptions({ name: 'h-button' });
@@ -41,7 +43,3 @@ export default defineComponent({
     }
   });
 </script>
-
-<style>
-  @import './style/index.less';
-</style>
