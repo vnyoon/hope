@@ -322,3 +322,116 @@
     ```
   * 将改动提交后根目录执行pnpm run publish:easyest，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
   * 选择完之后组件库就发布成功了，并且github上也成功加上了一个tag；
+
+## 八、VitePress 搭建部署组件库文档
+  * 组件库完成之后，一个详细的使用文档是必不可少的，使用 VitePress 快速搭建一个组件库文档站点并部署到GitHub上；
+
+### 8.1. 安装插件
+  * 项目根目录新建 site 文件夹，并在目录下执行pnpm init，然后安装vitepress和vue：`pnpm install -D vitepress vue`；
+  * 安装完成之后，site目录下新建 docs/index.md 文件写入：`# Holle hoped！！！`；
+  * 然后在 package.json文件 中新增scripts命令；
+    ```js
+    "scripts": {
+      "docs:dev": "vitepress dev docs",
+      "docs:build": "vitepress build docs",
+      "docs:pre": "vitepress preview docs"
+    }
+    ```
+  * 终端执行命令`pnpm run docs:dev`；
+
+### 8.2. 导航栏配置
+  * 在 docs/.vitepress 目录下新建config.js，重启项目就可以看到导航栏已经生效了。此时点击指南和组件是 404,因为我们还没有创建这些目录和文件；
+    ```js
+    export default {
+      themeConfig: {
+        siteTitle: "Welcome to hoped-ui~",
+        nav: [
+          {
+            text: "指南",
+            link: "/guild/installation"
+          },
+          {
+            text: "组件",
+            link: "/components/button/"
+          }
+        ],
+        socialLinks: [
+          {
+            icon: "github",
+            link: "https://github.com/one-season/hope"
+          }
+        ]
+      }
+    }
+    ```
+  * 在docs 目录下新建guild/installation.md以及components/button/index.md，再次点击即可跳转对应页面；
+
+### 8.3. 侧边栏配置
+  * 同样的在config.js中进行侧边栏配置sidebar；
+    ```js
+      sidebar: {
+        "/guild/": [
+          {
+            text: "基础",
+            items: [
+              {
+                text: "安装",
+                link: "/guild/installation"
+              },
+              {
+                text: "快速开始",
+                link: "/guild/quickstart"
+              }
+            ]
+          },
+          {
+            text: "进阶",
+            items: [
+              {
+                text: "xxx",
+                link: "/xxx"
+              },
+              {
+                text: "xxx2",
+                link: "/xxx2"
+              }
+            ]
+          }
+        ],
+        "/components/": [
+          {
+            text: "基础组件",
+            items: [
+              {
+                text: "Button",
+                link: "/components/button"
+              },
+              {
+                text: "Input",
+                link: "/components/input"
+              }
+            ]
+          }
+        ]
+      }
+    ```
+  
+### 8.4. 引入组件库
+  * 因为要搭建的是一个组件库文档站点，因此肯定是需要引入组件库的。这里引入的是本地的组件库，所以在 pnpm 的工作空间pnpm-workspace.yaml新增一个site目录；
+  * site目录下安装`pnpm add hoped-ui`，然后在 docs/.vitepress 下新建 theme/index.js引入我们的组件库；
+  * 回到components/button/index.md 中直接使用我们的 button 组件试一下；
+
+### 8.5. 部署静态站点
+  * 打包完成后可以部署到自己的服务器，也可以选择部署到 github 站点上。这里已如何部署到 github 站点为例；
+  * github中首先新建一个组织叫做`hoped-ui`，然后再组织下新建一个`hoped`仓库；
+  * 然后将site/docs/.vitepress/dist 提交到这个仓库里；
+  * 打开仓库为公开，点击 settings，然后左侧选择Pages选项，在构建和部署下面的Branch里，由None切换main或master，选择部署的分支以及目录，这里是根目录，保存刷新后GitHub Pages会有一个地址就是站点地址了；
+  * 因为最终访问的地址为`https://hoped-ui.github.io/hoped/`，所以在打包时调整site/docs/.vitepress/config.js文件；
+    ```js
+    export default {
+      base: process.env.NODE_ENV === 'production' ? '/hoped/' : '/',
+      ...省略代码
+    }
+    ```
+  * 如果访问出现了404可能base配置出错了，没有样式的话刷新之后等一会，再回来刷新。
+  * 以上完成之后便可访问站点[hoped](https://hoped-ui.github.io/hoped/)，站点是实时更新的，只要仓库发生改变站点就会改变；
