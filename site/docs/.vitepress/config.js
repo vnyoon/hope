@@ -1,7 +1,7 @@
 export default {
   base: process.env.NODE_ENV === 'production' ? '/hoped/' : '/',
   themeConfig: {
-    siteTitle: "Welcome to hoped-ui~",
+    // siteTitle: "Welcome to hoped-ui~",
     nav: [
       {
         text: "指南",
