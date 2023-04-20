@@ -1,0 +1,26 @@
+{
+  "name": "create-hope",
+  "version": "1.0.0",
+  "description": "hope是一个 Vue3 组件库开发环境框架，采用最新的 Vite4+TypeScript 为技术栈.",
+  "bin": "index.js",
+  "type": "module",
+  "keywords": [
+    "hope",
+    "搭建组件库框架"
+  ],
+  "author": "season",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/one-season/hope"
+  },
+  "homepage": "https://hoped-ui.github.io/hoped/",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "command-line-args": "^5.2.1",
+    "command-line-usage": "^7.0.1",
+    "download-git-repo": "^3.0.2",
+    "ora": "^6.3.0",
+    "prompts": "^2.4.2"
+  }
+}

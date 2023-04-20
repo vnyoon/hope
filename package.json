@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:hope": "gulp -f packages/components/script/build/index.ts",
-    "publish:hope": "gulp -f packages/components/script/publish/index.ts"
+    "publish:hope": "gulp -f packages/components/script/publish/index.ts",
+    "hope:dev": "pnpm run --filter ./play dev"
   },
   "keywords": [],
   "author": "",

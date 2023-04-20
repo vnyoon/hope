@@ -435,3 +435,217 @@
     ```
   * 如果访问出现了404可能base配置出错了，没有样式的话刷新之后等一会，再回来刷新。
   * 以上完成之后便可访问站点[hoped](https://hoped-ui.github.io/hoped/)，站点是实时更新的，只要仓库发生改变站点就会改变；
+
+## 九、搭建一个 Cli 脚手架
+  * 实现一个名为`create-hope`脚手架的开发，只需执行命令`npm init hope`就可以将整个组件库开发框架拉到本地；
+  
+### 9.1. 创建cli包
+  * 首先，在packages目录下新建cli目录，终端执行命令`pnpm init`进行初始化，然后把包名更改为`create-hope`；
+  > 这里需要知道的是当执行`npm init xxx`或者`npm create xxx`的时候，实际上是执行npx `create-xxx`，所以当执行`npm init hope`的时候实际上就是执行`npx create-hope`；
+  * 当执行`create-hope`时会执行 package.json 下的 bin 对应的路径，因此将package.json修改为下，并新建index.js作为入口文件，注意文件开头要加上`#! /usr/bin/env node`；
+    ```js
+      {
+        "name": "create-hope",
+        "version": "1.0.0",
+        "description": "",
+        "bin": "index.js",
+        "type": "module",
+        "keywords": [],
+        "author": "",
+        "license": "ISC"
+      }
+    ```
+
+### 9.2. 使用 command-line-args 处理用户输入命令
+  * 使用`command-line-args`进行用户参数解析，安装插件：`pnpm add command-line-args`；
+  * 新建一个 cli.js文件 用于处理脚手架的逻辑，这里实现一个 -v 版本命令；
+    ```js
+    import commandLineArgs from "command-line-args";
+    import { readFile } from "fs/promises";
+
+    // 读取文件
+    const pkg = JSON.parse(
+      await readFile(new URL("./package.json", import.meta.url))
+    );
+
+    // 配置命令参数
+    const optionDefinitions = [{ name: "version", alias: "v", type: Boolean }];
+    const options = commandLineArgs(optionDefinitions);
+
+    if (options.version) {
+      console.log(`v${pkg.version}`);
+    };
+    ```
+  * 然后index.js文件导入cli.js之后，终端执行`node index -v`，就能看到控制台输出版本号了；
+  * 还可以使用`command-line-usage`插件让它提供帮助命令，安装：`pnpm add command-line-usage`，cli.js文件添加代码，然后终端执行`node index -h`；
+    ```js
+    import commandLineUsage from "command-line-usage";
+
+    //...代码省略
+    // 配置命令参数
+    const optionDefinitions = [
+      { name: "version", alias: "v", type: Boolean },
+      { name: "help", alias: "h", type: Boolean }
+    ];
+    //...代码省略
+
+    // 帮助命令
+    const helpSections = [
+      {
+        header: "create-hope",
+        content: "一个快速生成组件库搭建环境的脚手架"
+      },
+      {
+        header: "Options",
+        optionList: [
+          {
+            name: "version",
+            alias: "v",
+            typeLabel: "{underline boolean}",
+            description: "版本号"
+          },
+          {
+            name: "help",
+            alias: "h",
+            typeLabel: "{underline boolean}",
+            description: "帮助"
+          }
+        ]
+      }
+    ];
+
+    if (options.help) {
+      console.log(commandLineUsage(helpSections));
+    };
+    ```
+
+### 9.3. 交互式命令
+  * 当我们使用一些脚手架的时候，比如`npm create vite`，它会出现一些选项让我们选择；
+  * 使用prompts插件，它可以配置用户输入哪些东西以及单选还是多选等，安装：`pnpm add prompts`，cli.js文件添加代码；
+    ```js
+    import prompts from "prompts";
+    // 添加预设选项
+    const promptsOptions = [
+      {
+        type: "text",
+        name: "user",
+        message: "用户"
+      },
+      {
+        type: "password",
+        name: "password",
+        message: "密码"
+      },
+      {
+        type: "select", //单选
+        name: "gender",
+        message: "性别",
+        choices: [
+          { title: "男", value: 0},
+          { title: "女", value: 1}
+        ]
+      },
+      {
+        type: "multiselect", //多选
+        name: "study",
+        message: "选择学习框架",
+        choices: [
+          { title: "Vue", value: 0 },
+          { title: "React", value: 1 },
+          { title: "Angular", value: 2 }
+        ]
+      }
+    ];
+    const getUserInfo = async () => {
+      const res = await prompts(promptsOptions);
+      console.log(res);
+    };
+    getUserInfo();
+    ```
+  * 控制台执行`node index`，就会让你输入和选择内容，完了会打印结果，根据对应的值处理不同的逻辑，当然脚手架不需要这么多参数，调整为下面选项；
+    ```js
+    const promptsOptions = [
+      {
+        type: "text",
+        name: "name",
+        message: "请输入项目名称"
+      },
+      {
+        type: "select", //单选
+        name: "template",
+        message: "请选择一个模板",
+        choices: [
+          { title: "hoped-ui", value: 1},
+          { title: "kitty-ui", value: 2}
+        ]
+      }
+    ];
+    ```
+
+### 9.4. 拉取远程仓库模板
+  * 拉取远程仓库可以使用 download-git-repo 工具，然后使用它的 clone 方法，同时需要安装一个 loading 插件 ora 以及 log 颜色插件 chalk；
+  * 安装插件：`pnpm add download-git-repo ora chalk`，新建utils/gitClone.js文件，添加代码；
+    ```js
+    import download from "download-git-repo";
+    import chalk from "chalk";
+    import ora from "ora";
+
+    export default (remote, name, option) => {
+      console.log(remote, name, option);
+      const downSpinner = ora("正在下载模板...").start();
+      
+      return new Promise((resolve, reject) => {
+        
+        download(remote, name, option, err => {
+          if (err) {
+            downSpinner.fail(chalk.red("下载模板失败！"));
+            console.log(chalk.red(err));
+            
+            reject(err);
+            return;
+          }
+
+          downSpinner.succeed(chalk.green("模板下载成功！"));
+          console.log(chalk.green(`cd ${name}\r\n`));
+          console.log(chalk.blue(`pnpm install\r\n`));
+          console.log('pnpm run hope:dev\r\n');
+          console.log('pnpm run build:hope\r\n');
+
+          resolve();
+        });
+
+      })
+    };
+    ```
+  * 调整cli.js文件，最后终端执行`node index.js`，根据终端提示是否下载成功；
+    ```js
+    import gitClone from "./utils/gitClone.js";
+
+    const getUserInfo = async () => {
+      const res = await prompts(promptsOptions);
+      console.log(res);
+      if (!res.name || !res.template) return;
+      
+      const remoteList = {
+        1: "https://github.com/one-season/hope.git",
+        2: "https://gitee.com/geeksdidi/kittyui.git"
+      };
+      gitClone(`direct:${remoteList[res.template]}`, res.name, { clone: true });
+    };
+
+    const runOptions = () => {
+      if (options.version) {
+        console.log(`v${pkg.version}`);
+        return;
+      };
+
+      if (options.help) {
+        console.log(commandLineUsage(helpSections));
+        return;
+      };
+
+      getUserInfo();
+    };
+    runOptions();
+    ```
+  * 最后将create-hope发布即可，发布参考[七、](https://github.com/one-season/hope#%E4%B8%83%E4%BD%BF%E7%94%A8-release-it-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86%E5%8F%91%E5%B8%83%E7%BB%84%E4%BB%B6%E5%BA%93)。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
