@@ -1,0 +1,7 @@
+/packages/hope
+dist
+node_modules
+
+.eslintignore
+.eslintrc
+README.md

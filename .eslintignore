@@ -1,0 +1,4 @@
+**.d.ts
+/packages/hope
+dist
+node_modules

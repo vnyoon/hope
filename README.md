@@ -649,3 +649,154 @@
     runOptions();
     ```
   * 最后将create-hope发布即可，发布参考[七、](https://github.com/one-season/hope#%E4%B8%83%E4%BD%BF%E7%94%A8-release-it-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86%E5%8F%91%E5%B8%83%E7%BB%84%E4%BB%B6%E5%BA%93)。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
+
+## 十、集成项目的编程规范工具链(ESlint+Prettier+Stylelint)
+  * 统一的代码规范旨在增强团队开发协作、提高代码质量和打造开发基石；
+
+### 10.1. 集成ESlint
+  * `ESLint`是在`ECMAScript/JavaScript`代码中识别和报告模式匹配的工具，它的目标是保证代码的一致性和避免错误；
+    - 安装：`pnpm add eslint -D -w`， 初始化ESlint：`pnpm create @eslint/config`；
+    - 此时会出现一些选项进行选择：
+      ```js
+      // 您希望如何使用ESLint？检查语法并发现问题
+      How would you like to use ESLint? To check syntax and find problems
+
+      // 您的项目使用什么类型的模块？esm
+      What type of modules does your project use? JavaScript modules (import/export)
+
+      // 您的项目使用哪个框架？vue
+      Which framework does your project use? · vue
+
+      // 你的项目使用TypeScript吗？是的
+      Does your project use TypeScript? · Yes
+
+      // 你的代码在哪里运行？浏览器
+      Where does your code run? · browser
+
+      // 您希望配置文件的格式是什么？JavaScript
+      What format do you want your config file to be in? · JavaScript
+
+      // Would you like to install them now? 不
+      Would you like to install them now? No
+      ```
+    - 因为框架使用的是 pnpm，所以选择安装那些插件的时候选择了No，这里用 pnpm 手动安装一下：`pnpm i eslint-plugin-vue@latest @typescript-eslint/eslint-plugin@latest @typescript-eslint/parser@latest -D -w`；
+  * 此时根目录出现了 ESlint 的配置文件.eslintrc.cjs，对这个文件进行配置上的修改；
+    ```js
+    module.exports = {
+        "env": {
+            "browser": true,
+            "es2021": true,
+            "node": true
+        },
+        "extends": [
+            "eslint:recommended",
+            "plugin:vue/vue3-essential",
+            "plugin:@typescript-eslint/recommended"
+        ],
+        "globals": {
+            defineOptions: true
+        },
+        "parser": "vue-eslint-parser",
+        "parserOptions": {
+            "ecmaVersion": "latest",
+            "sourceType": "module",
+            "parser": "@typescript-eslint/parser"
+        },
+        "plugins": [
+            "vue",
+            "@typescript-eslint"
+        ],
+        "rules": {
+            "@typescript-eslint/ban-ts-comment": "off",
+            "vue/multi-word-component-names": "off"
+        }
+    }
+    ```
+  * 新建`.eslintignore`文件来忽略一些文件的校验；
+    ```js
+    **.d.ts
+    /packages/hope
+    dist
+    node_modules
+    ```
+  * 然后在package.json的scripts中添加命令lint:script；
+    ```js
+    "scripts": {
+      "lint:script": "eslint --ext .js,.jsx,.vue,.ts,.tsx --fix --quiet ./"
+    }
+    ```
+  * 最后执行`pnpm run lint:script`就能看到一些不规范的地方，之后会做保存自动格式化；
+
+### 10.2. 集成Prettier
+  * ESLint 经常结合 Prettier 一起使用才能体现它们的能力，Prettier 主要是对代码做格式化，接下来实现将两者结合起来。安装：`pnpm add prettier -D -w`；
+  * 新建文件`.prettierrc.cjs`，忽略文件`.prettierignore`：
+    ```js
+    // .prettierrc.cjs
+    module.exports = {
+      printWidth: 80, //一行的字符数，如果超过会进行换行，默认为80
+      tabWidth: 2, // 一个 tab 代表几个空格数，默认为 2 个
+      useTabs: false, //是否使用 tab 进行缩进，默认为false，表示用空格进行缩减
+      singleQuote: true, // 字符串是否使用单引号，默认为 false，使用双引号
+      semi: true, // 行尾是否使用分号，默认为true
+      trailingComma: 'none', // 是否使用尾逗号
+      bracketSpacing: true // 对象大括号直接是否有空格，默认为 true，效果：{ a: 1 }
+    };
+
+    // .prettierignore
+    /packages/hope
+    dist
+    node_modules
+
+    .eslintignore
+    .eslintrc
+    README.md
+    ```
+  * 安装 eslint-config-prettier(覆盖 eslint 本身规则)和 eslint-plugin-prettier(Prettier 来接管 eslint --fix 即修复代码的能力)：`pnpm add eslint-config-prettier eslint-plugin-prettier -D -w`；
+  * 配置.eslintrc.cjs，新增的部分加了注释(注意配置完后将 VSCode 格式化文档默认选择 prettier)；
+    ```js
+    "extends": [
+        ...
+
+        // 1.接入 prettier 的规则
+        "prettier",
+        "plugin:prettier/recommended"
+    ],
+    "rules": {
+        ...
+
+        // 2. 开启 prettier 自动修复的功能
+        "prettier/prettier": "error"
+    }
+    ```
+  * 最后执行`pnpm run lint:script`即可完成 ESLint 规则校验检查以及 Prettier 的自动修复；
+  * 通常希望在保存代码的时候编辑器就能给我们自动格式化修复，VSCode 就可以做到，只需要一个简单的配置即可，打开vscode设置搜索forma，Default Formatter选择Prettier-Code formatter（注意前提已经安装了Prettier - Code formatter插件要不然找不到），然后往下走勾选Format On Save选项，设置完后除了忽略文件的文件按ctrl+s就能自动格式化代码了；
+
+### 10.3. 集成Stylelint
+  * 给项目引入 Stylelint(样式规范工具)，安装：`pnpm add stylelint stylelint-prettier stylelint-config-standard stylelint-config-recommended-less postcss-html stylelint-config-recommended-vue stylelint-config-recess-order stylelint-config-prettier -D -w`；
+  * 新建.stylelintrc.cjs文件：
+    ```js
+    module.exports = {
+      // 注册 stylelint 的 prettier插件
+      plugins: ["stylelint-prettier"],
+      // 继承一系列规则集合
+      extends: [
+        // standard 规则集合
+        "stylelint-config-standard",
+        "stylelint-config-recommended-less",
+        // 样式属性顺序规则
+        "stylelint-config-recess-order",
+        // 接入 Prettier 规则
+        "stylelint-config-prettier",
+        "stylelint-prettier/recommended"
+      ],
+      // 配置 rules
+      rules: {
+        // 开启 Prettier 自动格式化功能
+        "prettier/prettier": true
+      }
+    };
+    ```
+  * 在 package.json 中新增 script 命令，执行`pnpm run lint:style`即可完成样式的格式化，同样的如果想要保存时自动格式化可以在 VSCode 安装 Stylelint 插件:
+    ```js
+    "lint:style": "stylelint --fix \"packages/components/src/**/*.{css,less}\""
+    ```
