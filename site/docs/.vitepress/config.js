@@ -1,15 +1,11 @@
 export default {
   base: process.env.NODE_ENV === 'production' ? '/hoped/' : '/',
   themeConfig: {
-    siteTitle: "Welcome to hoped-ui~",
+    siteTitle: "Welcome To Hope~",
     nav: [
       {
-        text: "指南",
-        link: "/guild/installation"
-      },
-      {
-        text: "组件",
-        link: "/components/button/"
+        text: "文档",
+        link: "/guild/introduction"
       }
     ],
     socialLinks: [
@@ -19,29 +15,37 @@ export default {
       }
     ],
     sidebar: {
-      "/guild/": [
+      "/": [
         {
-          text: "基础",
+          text: "开始",
           items: [
             {
-              text: "安装",
-              link: "/guild/installation"
+              text: "简介",
+              link: "/guild/introduction"
             },
             {
-              text: "快速开始",
-              link: "/guild/quickstart"
+              text: "快速上手",
+              link: "/guild/quick-start"
             }
           ]
         },
         {
-          text: "进阶",
+          text: "基础",
           items: [
             {
-              text: "xxx",
+              text: "目录结构",
               link: "/xxx"
             },
             {
-              text: "xxx2",
+              text: "组件开发",
+              link: "/xxx2"
+            },
+            {
+              text: "全局组件",
+              link: "/xxx"
+            },
+            {
+              text: "打包发布",
               link: "/xxx2"
             }
           ]

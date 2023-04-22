@@ -2,8 +2,8 @@
 
 layout: home
 
-# title: Hope
-# titleTemplate: 一个Vue3组件库
+title: Hope
+titleTemplate: 一个快速搭建Vue3组件库的框架
 
 hero:
   name: Hope
