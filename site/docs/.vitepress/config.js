@@ -34,19 +34,19 @@ export default {
           items: [
             {
               text: "目录结构",
-              link: "/xxx"
+              link: "/base/"
             },
             {
               text: "组件开发",
-              link: "/xxx2"
+              link: "/base/component"
             },
             {
               text: "全局组件",
-              link: "/xxx"
+              link: "/base/global"
             },
             {
               text: "打包发布",
-              link: "/xxx2"
+              link: "/base/build"
             }
           ]
         }
