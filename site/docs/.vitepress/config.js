@@ -1,4 +1,5 @@
 export default {
+  title: "Hope",
   base: process.env.NODE_ENV === 'production' ? '/hoped/' : '/',
   themeConfig: {
     siteTitle: "Welcome To Hope~",
