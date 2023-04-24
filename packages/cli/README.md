@@ -8,5 +8,4 @@
   * [hope](https://hoped-ui.github.io/hoped/)
 
 ## 更多
-  * 学习于掘金作者[东方小月](https://juejin.cn/column/7118932817119019015)
-  * 学习更多、交流知识、分享经验：[地址](https://juejin.cn/user/3007909652072638/posts)
+  * [学习更多、交流知识、分享经验](https://juejin.cn/user/3007909652072638/posts)
