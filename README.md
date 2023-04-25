@@ -800,3 +800,93 @@
     ```js
     "lint:style": "stylelint --fix \"packages/components/src/**/*.{css,less}\""
     ```
+
+## 十一、引入现代前端测试框架 Vitest
+  * Vitest是个高性能的前端单元测试框架，它的用法其实和 Jest 差不多，但是它的性能要优于 Jest 不少，还提供了很好的 ESM 支持，同时对于使用 vite 作为构建工具的项目来说有一个好处就是可以公用同一个配置文件vite.config.js；
+  * 因为测试的前端组件库是运行在浏览器上的，所以需要额外安装`happy-dom`，同时还需要安装展示测试覆盖率工具`c8`，安装：`pnpm add vitest happy-dom c8 -D -w`；
+
+### 11.1. 配置
+  * 上面提到过，Vitest 的配置可以直接在`vite.config.ts`中配置，所以来到components/vite.config.ts中对 Vitest 做一个相关配置(三斜线命令告诉编译器在编译过程中要引入的额外的文件)；
+    ```js
+    /// <reference types="vitest" />
+
+    import { defineConfig } from "vite";
+    import vue from "@vitejs/plugin-vue";
+
+    import dts from "vite-plugin-dts";
+    // @ts-ignore
+    import DefineOptions from "unplugin-vue-define-options/vite";
+
+    export default defineConfig({
+      test: {
+        environment: "happy-dom"
+      },
+      build: {...
+    ```
+  * 接着在`package.json`中增加两个命令`vitest`和`vitest run --coverage`，分别是进行单元测试和查看单元测试覆盖情况，此时便可以使用 Vitest 进行测试了；
+    ```js
+    "scripts": {
+      ...,
+      "test": "vitest",
+      "coverage": "vitest run --coverage"
+    },
+    ```
+
+### 11.2. 执行测试
+  * 在执行test命令时，Vitest 会执行`**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}`的文件，这里把测试文件统一命名为`**/*.{test}.ts`的形式，并放在每个组件的__tests__目录下；
+  * 比如在 button 目录下新建__tests__/button.test.ts文件，然后写一个简单的测试代码看一下效果，然后在components目录下执行`pnpm run test`就可以看到测试通过了；
+    ```js
+    import { describe, expect, it } from "vitest";
+
+    describe('hellohope', () => {
+      it('should be hellohope', () => {
+        expect('hello' + 'hope').toBe('hellohope')
+      })
+    })
+    ```
+  * 然后执行`pnpm run coverage`可以看到测试覆盖情况，其中每个字段代表的含义如下；
+    - %stmts 是语句覆盖率（statement coverage）：是不是每个语句都执行了？
+    - %Branch 分支覆盖率（branch coverage）：是不是每个 if 代码块都执行了？
+    - %Funcs 函数覆盖率（function coverage）：是不是每个函数都调用了？
+    - %Lines 行覆盖率（line coverage）：是不是每一行都执行了？
+
+### 11.3. 测试组件
+  * 上面只是简单测试了一个字符串相加，现在测试组件是否复合要求；
+  * 因为项目是 vue 组件库，因此可以安装 Vue 推荐的测试库`pnpm add @vue/test-utils -D -w`；
+  * 修改一下button.test.ts文件，来测试一下 Button 组件的 slot；
+    ```js
+    import { describe, expect, it } from "vitest";
+
+    import { mount } from "@vue/test-utils";
+    import button from "../button.vue";
+
+    describe("test button", () => {
+      it("should render slot", () => {
+        const wrapper = mount(button, {
+          slots: {
+            default: "hope"
+          }
+        });
+
+        expect(wrapper.text()).toContain('hope')
+      })
+    })
+    ```
+    - `@vue/test-utils`提供了一个`mount`方法，可以传入不同参数来测试组件是否复合预期。比如上面测试代码的含义是：传入 `button` 组件，并将其默认`slot`设置为`hope`，期望页面加载的时候文本会展示`hope`，很显然`button`组件是有这个功能的，所以执行`pnpm run test`的时候这条测试就通过了；
+  * 如果还想测试`button`组件传入 type 展示某个样式的时候可以这样写：
+    ```js
+    ...
+
+    it("should have class", () => {
+      const wrapper = mount(button, {
+        props: {
+          type: "primary"
+        }
+      });
+
+      expect(wrapper.classes()).toContain('h-button--primary')
+    })
+    ```
+    - 这条测试的含义是：当传入的type为primary的时候，期望组件的类名为h-button--primary，很明显这条也是可以通过的，同时这时候会发现刚刚启动的测试自己自动更新了，说明Vitest是具有热更新功能的；
+
+> 关于[@vue/test-utils](https://test-utils.vuejs.org/guide/)更多功能感兴趣的可以查看官方文档；
