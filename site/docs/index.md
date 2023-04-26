@@ -21,6 +21,10 @@ hero:
       text: 在GitHub上查看
       link: https://github.com/one-season/hope
 
+    - theme: alt
+      text: 博客
+      link: https://juejin.cn/user/3007909652072638/posts
+
 features:
   - icon: 💡
     title: Vue3组件库

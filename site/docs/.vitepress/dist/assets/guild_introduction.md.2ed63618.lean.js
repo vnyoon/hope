@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as i,O as o}from"./chunks/framework.bf997157.js";const u=JSON.parse('{"title":"简介","description":"","frontmatter":{},"headers":[],"relativePath":"guild/introduction.md"}'),a={name:"guild/introduction.md"},r=o("",5),n=[r];function s(c,d,p,l,_,h){return i(),t("div",null,n)}const g=e(a,[["render",s]]);export{u as __pageData,g as default};
