@@ -3,6 +3,7 @@ export default {
   base: process.env.NODE_ENV === 'production' ? '/hoped/' : '/',
   themeConfig: {
     siteTitle: "Welcome To Hope~",
+    logo: "/hi.png",
     nav: [
       {
         text: "文档",
