@@ -12,7 +12,7 @@
   />
   <img 
     style="display:inline;margin-left:10px" 
-    src="https://img.shields.io/npm/dw/create-hope" 
+    src="https://img.shields.io/npm/dt/create-hope" 
   />
 </div>
 
