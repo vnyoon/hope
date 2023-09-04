@@ -65,7 +65,7 @@ const getUserInfo = async () => {
   if (!res.name || !res.template) return;
   
   const remoteList = {
-    1: "https://github.com/one-season/hope.git",
+    1: "https://github.com/vnyoon/hope.git",
     2: "https://gitee.com/geeksdidi/kittyui.git"
   };
   gitClone(`direct:${remoteList[res.template]}`, res.name, { clone: true });

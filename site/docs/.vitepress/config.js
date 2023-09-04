@@ -13,7 +13,7 @@ export default {
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/one-season/hope"
+        link: "https://github.com/vnyoon/hope"
       }
     ],
     sidebar: {

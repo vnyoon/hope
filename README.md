@@ -160,7 +160,7 @@
   * 安装vite-plugin-dts：`pnpm add vite-plugin-dts@1.4.1 -D -w`；
   * 调整vite.config.ts文件；
 
-## 五、[前端流程化控制工具gulp的使用](https://github.com/one-season/gulp-practice)
+## 五、[前端流程化控制工具gulp的使用](https://github.com/vnyoon/gulp-practice)
 
 ## 六、使用 gulp 打包组件库并实现按需加载
   * 使用 Vite 库模式打包的时候，vite 会将样式文件全部打包到同一个文件中，这样的话我们每次都要全量引入所有样式文件做不到按需引入的效果。所以打包的时候我们可以不让 vite 打包样式文件，样式文件将使用 gulp 进行打包；
@@ -168,11 +168,11 @@
   * 现在很多组件库的按需引入都是借助插件来解决的，比如ElementPlus是使用`unplugin-vue-components`和`unplugin-auto-import`；
   * 这两个插件可以实现：
     ```js
-    import { Button } from "easyest";
+    import { Button } from "hope";
 
     //相当于
-    import "easyest/es/src/button/style/index.css";
-    import "easyest/es/src/button/index.mjs";
+    import "hope/h/src/button/style/index.css";
+    import "hope/h/src/button/index.mjs";
     ```
 
 ### 6.2. 删除打包文件函数
@@ -262,9 +262,9 @@
   * 因为要发布的包名为打包后的 hope，因此在 packages/hope 下执行`pnpm init`生成package.json；
     ```js
       {
-        "name": "hope",
+        "name": "hoped-ui",
         "version": "1.0.0",
-        "description": "一个 Vue3 组件库开发环境框架，采用最新的 Vite4+TypeScript 为技术栈，支持按需加载、单元测试、自动打包与发布等功能，让我们能更专注于业务组件的开发",
+        "description": "一个希望的Vue3组件库",
         "main": "lib/index.js",
         "module": "h/index.mjs",
         "files": [
@@ -275,22 +275,28 @@
           "test": "echo \"Error: no test specified\" && exit 1"
         },
         "keywords": [
-          "hope",
-          "vue3组件库"
+          "hopeui",
+          "hope-ui",
+          "Vue3组件库"
         ],
+        "author": "yoon",
+        "license": "MIT",
         "sideEffects": [
           "**/*.css"
         ],
-        "author": "season",
-        "license": "MIT",
-        "typings": "lib/index.d.ts"
+        "typings": "lib/index.d.ts",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/vnyoon/hope.git"
+        },
+        "homepage": "https://hoped-ui.github.io/hoped/"
       }
     ```
   * 解释一下其中的几个字段：
     - main：组件库入口文件；
     - module：如果使用组件库的环境支持 esmodule 则入口文件变成这个字段；
     - files：发布到 npm 上的文件目录；
-    - sideEffects：忽略 tree shaking 带来副作用的代码，比如打包后组件代码中包含了`import "./xxx.css"`，这样会使得构建工具无法知道这段代码是否有副作用(也就是会不会用到其它引入的文件中的代码)，所以构建的时候就会全量打包代码从而失去 esmodule 的自动按需引入功能。因此加上 sideEffects 字段就可以告诉构建工具这段代码不会产生副作用，可以放心的 tree shaking；
+    - sideEffects：忽略 tree shaking 带来副作用的代码，比如打包后组件代码中包含了`import "./xxx.css"`，这样会使得构建工具无法知道这段代码是否有副作用(也就是会不会用到其它引入的文件中的代码)，所以构建的时候就会全量打包代码从而失去 esmodule 的自动按需引入功能。因此加上 sideEffects 字段就可以告诉构建工具这段代码不会产生副作用，可以放心的`tree shaking`；
     - typings：声明文件入口；
 
 ### 7.2. 关联npmjs手动发布
@@ -320,7 +326,7 @@
       "publish:hope": "gulp -f packages/components/script/publish/index.ts"
     },
     ```
-  * 将改动提交后根目录执行pnpm run publish:easyest，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
+  * 将改动提交后根目录执行`pnpm run publish:hope`，就会发现他让我们选择如何提升版本，是否发布，是否加个tag等等；
   * 选择完之后组件库就发布成功了，并且github上也成功加上了一个tag；
 
 ## 八、VitePress 搭建部署组件库文档
@@ -358,7 +364,7 @@
         socialLinks: [
           {
             icon: "github",
-            link: "https://github.com/one-season/hope"
+            link: "https://github.com/vnyoon/hope"
           }
         ]
       }
@@ -627,7 +633,7 @@
       if (!res.name || !res.template) return;
       
       const remoteList = {
-        1: "https://github.com/one-season/hope.git",
+        1: "https://github.com/vnyoon/hope.git",
         2: "https://gitee.com/geeksdidi/kittyui.git"
       };
       gitClone(`direct:${remoteList[res.template]}`, res.name, { clone: true });
@@ -648,7 +654,7 @@
     };
     runOptions();
     ```
-  * 最后将create-hope发布即可，发布参考[七、](https://github.com/one-season/hope#%E4%B8%83%E4%BD%BF%E7%94%A8-release-it-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86%E5%8F%91%E5%B8%83%E7%BB%84%E4%BB%B6%E5%BA%93)。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
+  * 最后将create-hope发布即可，发布参考[七、](https://github.com/vnyoon/hope#%E4%B8%83%E4%BD%BF%E7%94%A8-release-it-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86%E5%8F%91%E5%B8%83%E7%BB%84%E4%BB%B6%E5%BA%93)。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
 
 ## 十、集成项目的编程规范工具链(ESlint+Prettier+Stylelint)
   * 统一的代码规范旨在增强团队开发协作、提高代码质量和打造开发基石；
