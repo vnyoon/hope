@@ -654,7 +654,7 @@
     };
     runOptions();
     ```
-  * 最后将create-hope发布即可，发布参考[七、](https://github.com/vnyoon/hope#%E4%B8%83%E4%BD%BF%E7%94%A8-release-it-%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%8A%A8%E7%AE%A1%E7%90%86%E5%8F%91%E5%B8%83%E7%BB%84%E4%BB%B6%E5%BA%93)。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
+  * 最后将create-hope发布即可，发布参考[七、]()。最后随便找个文件夹执行`npm create hope`试一下，hope项目被克隆了下来了就是成功；
 
 ## 十、集成项目的编程规范工具链(ESlint+Prettier+Stylelint)
   * 统一的代码规范旨在增强团队开发协作、提高代码质量和打造开发基石；
